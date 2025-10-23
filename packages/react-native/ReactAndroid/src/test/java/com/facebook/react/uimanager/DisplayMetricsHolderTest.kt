@@ -166,4 +166,22 @@ class DisplayMetricsHolderTest {
     assertThat(decodedWidth).isEqualTo(width)
     assertThat(decodedHeight).isEqualTo(height)
   }
+
+  @Test
+  fun initDisplayMetrics_preservesScaledDensityForFontScale() {
+    // Set up display metrics with custom scaledDensity (simulating fontScale != 1.0)
+    val originalMetrics = context.resources.displayMetrics
+    val customScaledDensity = originalMetrics.density * 0.85f // fontScale = 0.85
+
+    // Modify the display metrics to simulate a different fontScale
+    originalMetrics.scaledDensity = customScaledDensity
+
+    DisplayMetricsHolder.initDisplayMetrics(context)
+
+    val screenMetrics = DisplayMetricsHolder.getScreenDisplayMetrics()
+
+    // Verify that scaledDensity is preserved from window metrics
+    // This ensures fontScale is respected for text rendering
+    assertThat(screenMetrics.scaledDensity).isEqualTo(customScaledDensity)
+  }
 }
